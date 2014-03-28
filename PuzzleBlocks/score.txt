@@ -1,0 +1,1 @@
+{"lastHS":41,"path":"score.txt","score":57,"HS":0,"beatHS":true}
