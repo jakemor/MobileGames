@@ -53,9 +53,6 @@ function square.new( x, y, w, h, row, col )
 			-- place in new spot
 			elseif (_pickedUp ~= nil and _board[square.row][square.col] == 0) then
 				
-				
-				
-				
 				function placed(  )
 					_placed = true;
 					_board:removeLines()	

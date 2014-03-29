@@ -30,6 +30,23 @@ local ScoreKeeper = ScoreKeeper.new("score")
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
+
+	-- place underneath board
+	local got = {
+		text = "Game Over", 
+		x = W/2, 
+		y = H/2 - 100, 
+		width = W, 
+		height = 324,
+		font = system.native, 
+		fontSize = 150,
+		align = "center"
+	}
+
+	local gameOverText = display.newText(got)
+	gameOverText:setFillColor( .5, .5, .5 )
+	gameOverText.alpha = 0; 
+
 	local group = self.view
 	local board = board.new()
 	local nextBlocks = nextBlocks.new()
@@ -57,11 +74,28 @@ function scene:createScene( event )
 			
 		elseif (self.hasFocus) then
 			if(e.phase == "ended" or e.phase == "canceled") then
-				_score = 0;
-				scoreText.text = "0"
-				board:revive();
-				display.getCurrentStage( ):setFocus(nil)
-				self.hasFocus = nil
+			-----------
+			-- Reset -- 
+			-----------
+				local function resetGame(  )
+					local tranny = transition.to(gameOverText, {time = 1000, alpha = 0})
+					_score = 0;
+					scoreText.text = "0"
+					board:revive();
+					display.getCurrentStage( ):setFocus(nil)
+					self.hasFocus = nil
+				end
+
+				-- if midgame reset
+				if (board.paint[1][1].image.alpha == 0) then
+					resetGame()
+				else
+					board:remove()
+					local timer3 = timer.performWithDelay( 2000, resetGame, 1)
+				end
+
+				-- if gameover reset
+
 			end
 		end
 	end
@@ -80,12 +114,15 @@ function scene:createScene( event )
 	
 	highScoreText:setFillColor( .5, .5, .5 )
 
-	local function nextWave()
+	local function nextWave(e)
 		if (_gameOver) then
+			---------------
+			-- GAME OVER -- 
+			---------------
+			local tranny = transition.to(gameOverText, {time = 1000, alpha = 1})
 			_gameOver = false; 
 			board:remove()
 		end
-
 		highScoreText.text = "Best: "..ScoreKeeper:getHighScore()
 
 		if (_score > 100) then
@@ -110,11 +147,16 @@ function scene:createScene( event )
 		else
 			_placed = false;  
 		end
-		if (tonumber(scoreText.text) ~= _score) then
+		if (tonumber(scoreText.text) < _score) then
 			local number = tonumber(scoreText.text)
-			number = number + 1
+			number = number + 5
+			if (number >= _score) then
+				ScoreKeeper:update(_score);
+				number = _score; 
+			end
 			scoreText.text = number
 			number = nil
+			 
 		end
 	end
 	Runtime:addEventListener( "enterFrame", nextWave )

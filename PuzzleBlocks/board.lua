@@ -208,9 +208,10 @@ function board:removeLines( )
 			toDelete:push({stack:pop(), i})
 		end
 	end
-		
-
 	
+	----------------------------------------------------
+	-- INSERT CALL TO ALTERNATE LINE FINDING ALGORITH -- 
+	----------------------------------------------------
 
 	-- delete them
 	local function timeUp ()
@@ -221,13 +222,14 @@ function board:removeLines( )
 		if (not _added) then
 			local function addScore ()
 				banner.new("+" .. #toDelete*#toDelete*_waveNumber, W/2, H/2 )
-
+			--[[
+				OPTIONAL SECOND BANNER
 				local function timer2R(  )
-				--	banner.new("x" .. _waveNumber, W/2, H/2 - 150,100 )
+					banner.new("x" .. _waveNumber, W/2, H/2 - 150,100 )
 				end
 
 				local timer2 = timer.performWithDelay( 300, timer2R ,1 )
-
+			]]--
 				_score = _score + #toDelete*#toDelete*_waveNumber
 				ScoreKeeper:update(_score)
 			end
@@ -320,9 +322,6 @@ function board:scanRow( row )
 	return stack
 end
 return board
-
-
-
 
 
 
